@@ -92,10 +92,15 @@ router.post('/api/signup', async (req, res) => {
             email: req.body.email,
             password: req.body.password
         }
-        const newUser = new UserDATA(item); //to check incoming data
-        const saveUser = await newUser.save(); //mongodb save
-        res.send(saveUser);
 
+        let user = await UserDATA.findOne({ email: req.body.email })
+        if (!user) {
+            const newUser = new UserDATA(item); //to check incoming data
+            const saveUser = await newUser.save(); //mongodb save
+            res.send(saveUser);
+        }
+        return res.json({ message: "Email already registered" });
+       
     } catch (error) {
         console.log(error);
     }
@@ -113,7 +118,7 @@ router.post('/api/login', async (req, res) => {
         res.send({ token });
 
         // return res.json({ message: "User Logged in Successfully" });
-     
+
 
     } catch (error) {
         console.log(error);
